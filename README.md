@@ -10,7 +10,8 @@ mast is a installation script which contains several installation instructions t
 - Command Line Tools
 
 ## What does the script do ?
-Some mandatory applications, dotfiles and preferences for me are installed automatically.
+
+**Some mandatory applications, dotfiles and preferences for me are installed automatically.**
 
 - Hostname, Computername
 - Git Configuration
@@ -141,7 +142,8 @@ Some mandatory applications, dotfiles and preferences for me are installed autom
     - Installing XVim2 plugin
 
 
-Other applications, dotfiles and preferences are optional and the user is asked on every step to continue installation or not.
+**Other applications, dotfiles and preferences are optional and the user is asked on every step to continue installation or not.**
+
 - Installing node.js
     - nvm
     - node
