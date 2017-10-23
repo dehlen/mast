@@ -707,8 +707,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     " >> "$HOME/.vim_runtime/my_configs.vim"
 
     echo "Generating Certificate to codesign Xcode"
-    set -o errexit
-    ≈=XcodeSigner
+    cert="XcodeSigner"
     cat <<EOF >${cert}.cfg
     [ req ]
     default_bits       = 2048        # RSA key size
