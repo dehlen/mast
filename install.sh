@@ -18,7 +18,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   if [ -f "$HOME/.mackup.cfg" ] ; then
     echo "No path specified for your app preference backup."
     echo "You can create such a backup via mackup."
-    echo -e "${RED}Do you still want to proceed ?${NC}"
+    echo -e "${RED}Do you still want to proceed? ${NC}[y/N]"
     read -n 1 -r
     echo    # (optional) move to a new line
     if ! [[ $REPLY =~ ^[Yy]$ ]] ; then
@@ -541,7 +541,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]
     then
-    # Install Fritzing
+    # Install Virtualbox
     brew cask install virtualbox
     brew cask install virtualbox-extension-pack
   fi
@@ -751,7 +751,7 @@ EOF
 
   clear
 
-  echo "${GREEN}Done"
+  echo "${GREEN}Done${NC}"
 
   exit 0
 else
