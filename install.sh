@@ -708,7 +708,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   echo "Generating Certificate to codesign Xcode"
   cert="XcodeSigner"
-  cat <<EOF >${cert}.cfg
+  echo "
   [ req ]
   default_bits       = 2048        # RSA key size
   encrypt_key        = no          # Protect private key
@@ -720,7 +720,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   [ codesign_reqext ]
   keyUsage           = critical,digitalSignature
   extendedKeyUsage   = critical,codeSigning
-EOF
+  " > "${cert}.cfg"
   if $(security find-certificate -Z -p -c "$cert" /Library/Keychains/System.keychain 2>&1 | egrep -o '^SHA-1' >/dev/null); then
     echo "$cert is already installed, no need to create it"
   else
