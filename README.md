@@ -94,9 +94,9 @@ mast is a installation script which contains several installation instructions t
     - rescuetime
     - tower
     - charles
-    - dash
+    - dash 3
     - hopper disassembler & debugger server
-    - alfred
+    - alfred 2
     - 1password
     - spectacle
     - visual studio code
