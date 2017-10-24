@@ -7,7 +7,7 @@ mast is a installation script which contains several installation instructions t
 
 ## Prerequisites
 - Xcode
-- Command Line Tools
+- Xcode Command Line Tools
 
 ## What does the script do ?
 
