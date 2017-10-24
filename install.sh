@@ -351,7 +351,7 @@ function installJSEnvironment {
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]
     then
-    # Install Nodejs
+    # Install NVM
     echo "Installing NVM"
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.4/install.sh | bash
 
@@ -359,17 +359,19 @@ function installJSEnvironment {
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm so we dont have to reboot the terminal
 
     #Installing Nodejs
-
     echo "Installing Nodejs"
     nvm install node
     nvm use node
 
+    #Intalling yarn
     echo "Installing yarn"
     brew install yarn
 
+    #Installing watchman
     echo "Installing watchman"
     brew install watchman
 
+    #Installing react-native-cli
     echo "Installing React-Native CLI"
     npm install -g react-native-cli
   fi
@@ -394,7 +396,7 @@ function installRubyEnvironment {
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]
     then
-    # Install ruby
+    # Install ruby with rvm and bundler
     brew install gpg
     command curl -sSL https://rvm.io/mpapis.asc | gpg --import -
     \curl -L https://get.rvm.io | bash -s stable
