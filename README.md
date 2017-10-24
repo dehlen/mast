@@ -97,7 +97,6 @@ mast is a installation script which contains several installation instructions t
     - dash
     - hopper disassembler & debugger server
     - alfred
-    - fantastical
     - 1password
     - spectacle
     - visual studio code
