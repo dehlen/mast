@@ -8,14 +8,8 @@ NC='\033[0m' # No Color
 # Ask for the administrator password upfront.
 sudo -v
 
-# Keep Sudo Until Script is finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
-# Check if OSX Command line tools are installed
-if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
-  test -d "${xpath}" && test -x "${xpath}" ; then
-
-  if [ -f "$HOME/.mackup.cfg" ] ; then
+function checkMackup {
+	if [ -f "$HOME/.mackup.cfg" ] ; then
     echo "No path specified for your app preference backup."
     echo "You can create such a backup via mackup."
     echo -e "${RED}Do you still want to proceed? ${NC}[y/N]"
@@ -25,11 +19,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
       exit 0
     fi
   fi
+}
 
-  ###############################################################################
-  # Computer Settings                                                           #
-  ###############################################################################
-  echo -e "${RED}Enter your computer name please?${NC}"
+function setComputerSettings {
+	echo -e "${RED}Enter your computer name please?${NC}"
   read cpname
   echo -e "${RED}Please enter your name?${NC}"
   read name
@@ -48,27 +41,42 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   defaults write com.apple.finder ShowStatusBar -bool false
   defaults write NSGlobalDomain KeyRepeat -int 0.02
   defaults write NSGlobalDomain InitialKeyRepeat -int 12
-  chflags nohidden ~/Library
-
+  chflags nohidden "$HOME/Library"
 
   git config --global user.name "$name"
   git config --global user.email "$email"
   git config --global color.ui true
+}
 
-  ###############################################################################
-  # Finder, Dock & System                                                       #
-  ###############################################################################
-  echo "Setting some preferences..."
-  # Disable the sound effects on boot
-  sudo nvram SystemAudioVolume=" "
+function setTrackpadPreferences {
+	 # Trackpad: enable tap to click for this user and for the login screen
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-  # Save to disk (not to iCloud) by default
-  defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+  # Trackpad: map bottom right corner to right-click
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
-  # Disable the “Are you sure you want to open this application?” dialog
-  defaults write com.apple.LaunchServices LSQuarantine -bool false
+  # Disable “natural” (Lion-style) scrolling
+  defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+}
 
-  # Disable automatic capitalization as it’s annoying when typing code
+function setLanguagePreferences {
+  # Set language and text formats
+  defaults write NSGlobalDomain AppleLanguages -array "de"
+  defaults write NSGlobalDomain AppleLocale -string "de_DE@currency=EUR"
+  defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
+  defaults write NSGlobalDomain AppleMetricUnits -bool true
+
+  # Set the timezone; see `sudo systemsetup -listtimezones` for other values
+  sudo systemsetup -settimezone "Europe/Berlin" > /dev/null
+}
+
+function setTypingPreferences {
+	 # Disable automatic capitalization as it’s annoying when typing code
   defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
   # Disable smart dashes as they’re annoying when typing code
@@ -82,35 +90,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Disable auto-correct
   defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+}
 
-  # Trackpad: enable tap to click for this user and for the login screen
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
-  # Trackpad: map bottom right corner to right-click
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
-  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
-  defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
-  defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
-
-  # Disable “natural” (Lion-style) scrolling
-  defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
-
-  # Set language and text formats
-  defaults write NSGlobalDomain AppleLanguages -array "de"
-  defaults write NSGlobalDomain AppleLocale -string "de_DE@currency=EUR"
-  defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
-  defaults write NSGlobalDomain AppleMetricUnits -bool true
-
-  # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-  sudo systemsetup -settimezone "Europe/Berlin" > /dev/null
-
-  # Require password immediately after sleep or screen saver begins
-  defaults write com.apple.screensaver askForPassword -int 1
-  defaults write com.apple.screensaver askForPasswordDelay -int 0
-
-  # Save screenshots to the desktop
+function setScreenshotPreferences {
+	# Save screenshots to the desktop
   defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 
   # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
@@ -118,9 +101,21 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Disable shadow in screenshots
   defaults write com.apple.screencapture disable-shadow -bool true
+}
 
-  # When performing a search, search the current folder by default
-  defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+function setSystemDefaults {
+	# Disable the sound effects on boot
+  sudo nvram SystemAudioVolume=" "
+  
+  # Save to disk (not to iCloud) by default
+  defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+  
+  # Disable the “Are you sure you want to open this application?” dialog
+  defaults write com.apple.LaunchServices LSQuarantine -bool false
+  
+  # Require password immediately after sleep or screen saver begins
+  defaults write com.apple.screensaver askForPassword -int 1
+  defaults write com.apple.screensaver askForPasswordDelay -int 0
 
   # Avoid creating .DS_Store files on network or USB volumes
   defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
@@ -130,25 +125,34 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   defaults write com.apple.frameworks.diskimages skip-verify -bool true
   defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
   defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
+}
+
+function setFinderDefaults {
+	 # When performing a search, search the current folder by default
+  defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
   # Automatically open a new Finder window when a volume is mounted
   defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
   defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
   defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
-  # Enable snap-to-grid for icons on the desktop and in other icon views
-  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-  /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-  /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-
   # Use column list view in all Finder windows by default
   defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
+}
 
-  #Set dock icon size to 50 pixels
+function setDockPreferences {
+	 #Set dock icon size to 50 pixels
   defaults write com.apple.dock tilesize -int 50
 
   # Show indicator lights for open applications in the Dock
   defaults write com.apple.dock show-process-indicators -bool true
+}
+
+function setDesktopPreferences {
+	# Enable snap-to-grid for icons on the desktop and in other icon views
+  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" "$HOME/Library/Preferences/com.apple.finder.plist"
+  /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" "$HOME/Library/Preferences/com.apple.finder.plist"
+  /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" "$HOME/Library/Preferences/com.apple.finder.plist"
 
   # Disable Dashboard
   defaults write com.apple.dashboard mcx-disabled -bool true
@@ -159,8 +163,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   # Top right screen corner → Desktop
   defaults write com.apple.dock wvous-tr-corner -int 4
   defaults write com.apple.dock wvous-tr-modifier -int 0
+}
 
-  defaults write com.apple.systemuiserver menuExtras '(
+function setMenubarPreferences {
+	defaults write com.apple.systemuiserver menuExtras '(
   "/System/Library/CoreServices/Menu Extras/Clock.menu",
   "/System/Library/CoreServices/Menu Extras/Battery.menu",
   "/System/Library/CoreServices/Menu Extras/AirPort.menu",
@@ -170,8 +176,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   # Show battery percentage in menu bar
   defaults write com.apple.systemuiserver "NSStatusItem Visible com.apple.menuextra.battery" -bool true
   defaults write com.apple.menuextra.battery '{ ShowPercent = YES; }'
+}
 
-  #enable night shift from 22-07
+function setNightShiftPreferences {
+	#enable night shift from 22-07
   CORE_BRIGHTNESS="/var/root/Library/Preferences/com.apple.CoreBrightness.plist"
 
   ENABLE='{
@@ -193,12 +201,23 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   sudo defaults write $CORE_BRIGHTNESS "CBUser-0" "$ENABLE"
   sudo defaults write $CORE_BRIGHTNESS "CBUser-$(dscl . -read "$HOME" GeneratedUID | sed 's/GeneratedUID: //')" "$ENABLE"
+}
 
+function setSystemPreferences {
+  echo "Setting some preferences..."
+ 
+ 	setSystemDefaults
+  setTypingPreferences
+ 	setTrackpadPreferences
+ 	setLanguagePreferences
+ 	setScreenshotPreferences
+ 	setFinderDefaults
+ 	setDockPreferences
+ 	setMenubarPreferences
+ 	setNightShiftPreferences
+}
 
-  ###############################################################################
-  # Safari                                                                      #
-  ###############################################################################
-
+function setSafariPreferences {
   # Privacy: don’t send search queries to Apple
   defaults write com.apple.Safari UniversalSearchEnabled -bool false
   defaults write com.apple.Safari SuppressSearchSuggestions -bool true
@@ -249,12 +268,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Update extensions automatically
   defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
+}
 
-  ###############################################################################
-  # Mail                                                                        #
-  ###############################################################################
-
-  # Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
+function setMailPreferences {
+	# Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
   defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
   # Disable inline attachments (just show the icons)
@@ -262,12 +279,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Disable automatic spell checking
   defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnabled"
+}
 
-  ###############################################################################
-  # Terminal & iTerm 2                                                          #
-  ###############################################################################
-
-  # Only use UTF-8 in Terminal.app
+function setTerminalPreferences {
+	# Only use UTF-8 in Terminal.app
   defaults write com.apple.terminal StringEncodings -array 4
 
   # Enable Secure Keyboard Entry in Terminal.app
@@ -275,11 +290,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Disable the annoying line marks
   defaults write com.apple.Terminal ShowLineMarks -int 0
+}
 
-  ###############################################################################
-  # Mac App Store                                                               #
-  ###############################################################################
-  # Enable the automatic update check
+function setMacAppStorePreferences {
+	# Enable the automatic update check
   defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
 
   # Check for software updates daily, not just once per week
@@ -296,28 +310,23 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   # Allow the App Store to reboot machine on macOS updates
   defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
+}
 
-  ###############################################################################
-  # Photos                                                                      #
-  ###############################################################################
-
-  # Prevent Photos from opening automatically when devices are plugged in
+function setPhotoPreferences {
+	# Prevent Photos from opening automatically when devices are plugged in
   defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+}
 
-  ###############################################################################
-  # Other Settings                                                              #
-  ###############################################################################
+function setOtherPreferences {
   # Use plain text mode for new TextEdit documents
   defaults write com.apple.TextEdit RichText -int 0
 
   # Auto-play videos when opened with QuickTime Player
   defaults write com.apple.QuickTimePlayerX MGPlayMovieOnOpen -bool true
+}
 
-  ###############################################################################
-  # Kill affected applications                                                  #
-  ###############################################################################
-
-  for app in "cfprefsd" \
+function killallApplicationsForPreferences {
+	for app in "cfprefsd" \
   "Dock" \
   "Finder" \
   "Mail" \
@@ -327,20 +336,17 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   "Terminal"; do
     killall "${app}" &> /dev/null
   done
+}
 
-  echo "${GREEN}Done setting preferences."
-  echo "Note that some of these changes require a logout/restart to take effect."
-
-  ###############################################################################
-  # Install Applications                                                        #
-  ###############################################################################
-
-  # Install Homebrew
+function installHomebrew {
+	# Install Homebrew
   echo "Installing Homebrew"
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
 
-  clear
-  echo -e "${RED}Install NodeJS? ${NC}[y/N]"
+function installJSEnvironment {
+	clear
+  echo -e "${RED}Setup Javascript Development? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]
@@ -367,8 +373,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     echo "Installing React-Native CLI"
     npm install -g react-native-cli
   fi
+}
 
-  clear
+function installPythonEnvironment {
+	clear
   echo -e "${RED}Install Python? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -377,8 +385,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     # Install Python
     brew install python
   fi
+}
 
-  clear
+function installRubyEnvironment {
+	clear
   echo -e "${RED}Install Ruby?${NC} [y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -393,7 +403,9 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
     gem install bundler
   fi
+}
 
+function installiOSEnvironment {
   clear
   echo -e "${RED}Setup iOS Development?${NC} [y/N]"
   read -n 1 -r
@@ -408,8 +420,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     fastlane \
     opensim
   fi
+}
 
-  clear
+function installJavaEnvironment {
+	clear
   echo -e "${RED}Setup for Java Development? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -421,8 +435,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     eclipse-ide \
     eclipse-java
   fi
+}
 
-  clear
+function installAndroidEnvironment {
+	clear
   echo -e "${RED}Setup For Android Development?${NC} [y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -439,8 +455,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     brew install gradle
     brew install android-sdk
   fi
+}
 
-  clear
+function installDatabases {
+	clear
   echo -e "${RED}Install Databases? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -456,9 +474,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     brew install caskroom/cask/brew-cask
     brew cask install --appdir="/Applications" dbeaver-community
   fi
+}
 
-
-  clear
+function installCommandLineTools {
+	clear
   # Install Homebrew Apps
   echo "Installing Homebrew Command Line Tools"
   echo -e "Installing\n[+]wget\n[+]micro\n[+]jid\n[+]vim\n[+]tldr\n[+]z\n[+]ack"
@@ -470,10 +489,14 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   tldr \
   z \
   ack
+}
 
+function installCask {
   brew tap caskroom/cask
+}
 
-  clear
+function installOptionalApplications {
+	clear
   echo -e "${RED}Install Kitematic? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -566,7 +589,9 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     brew cask install mactex
     brew cask install texmaker
   fi
+}
 
+function installMacAppStoreApps {
   echo -e "${RED}Install some of your Mac App Store Apps? ${NC}[y/N]"
   read -n 1 -r
   echo    # (optional) move to a new line
@@ -591,8 +616,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
       mas install "$id"
     done
   fi
+}
 
-  echo "Installing Apps"
+function installApplications {
+	echo "Installing Apps"
   echo -e "Installing\n[+]Google Chrome\n[+]Postman\n[+]Reggy\n[+]AppCleaner\n[+]Wireshark\n[+]VNC-Viewer\n[+]Sublime Text\n[+]Dropbox\n[+]RescueTime\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred\n[+]Fantastical\n[+]1Password\n[+]Visual Studio Code"
 
   brew cask install \
@@ -615,7 +642,9 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   spectacle \
   visual-studio-code \
   sublime-text
+}
 
+function restoreMackupBackup {
   if [ -f "$HOME/.mackup.cfg" ] ; then
     echo "${RED}No backup path specified. Skipping this step.${NC}"
   else
@@ -624,11 +653,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     make -C "$HOME/.mackup-master"
     mackup restore
   fi
+}
 
-  ###############################################################################
-  # Install Fonts                                                               #
-  ###############################################################################
-  echo "Installing Fonts"
+function installFonts {
+	echo "Installing Fonts"
   fonts=(
     font-anonymous-pro
     font-hack
@@ -661,12 +689,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
     font-varela
     )
   brew cask install ${fonts[@]}
+}
 
-  ###############################################################################
-  # Installing dotfiles                                                         #
-  ###############################################################################
-
-  echo "Installing .bashrc"
+function installBashrc {
+	echo "Installing .bashrc"
   echo "
   . /usr/local/etc/profile.d/z.sh
 
@@ -683,8 +709,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   }
 
   alias ll='ls -la'" >> "$HOME/.bashrc"
+}
 
-  echo "Installing .bash_profile"
+function installBashProfile {
+	echo "Installing .bash_profile"
   echo "
   source ~/.bashrc
 
@@ -693,8 +721,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
 
   export CLICOLOR=1
   export LSCOLORS=ExFxBxDxCxegedabagacad" >> "$HOME/.bash_profile"
+}
 
-  echo "Installing vim configuration"
+function installVimConfiguration {
+	echo "Installing vim configuration"
   git clone --depth=1 https://github.com/amix/vimrc.git "$HOME/.vim_runtime"
   sh "$HOME/.vim_runtime/install_awesome_vimrc.sh"
   echo "
@@ -705,8 +735,10 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   let g:netrw_banner = 0
   set clipboard=unnamed
   " >> "$HOME/.vim_runtime/my_configs.vim"
+}
 
-  echo "Generating Certificate to codesign Xcode"
+function codesignXcode {
+	echo "Generating Certificate to codesign Xcode"
   cert="XcodeSigner"
   echo "
   [ req ]
@@ -739,18 +771,59 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   xcodePath="$(xcode-select -p)"
   xcodePath="${xcodePath%%/Contents*}"
   sudo codesign -f -s "$cert" "$xcodePath"
+}
 
-  echo "Loading XVim Plugin for Xcode"
+function installXcodePlugins {
+	echo "Loading XVim Plugin for Xcode"
   git clone https://github.com/XVimProject/XVim2.git "$HOME/.xcode_plugins"
   make -C "$HOME/.xcode_plugins"
   echo "${RED}Plugin successfully installed. Launch Xcode and select \"Load Bundle\".${NC}"
   echo "${RED}If you clicked \"Don't Load Bundle\" by mistake execute the following from Terminal and launch Xcode again: defaults delete com.apple.dt.Xcode DVTPlugInManagerNonApplePlugIns-Xcode-X.X # (X.X is your Xcode version)${NC}"
+}
+
+# Keep Sudo Until Script is finished
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+# Check if OSX Command line tools are installed
+if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
+  test -d "${xpath}" && test -x "${xpath}" ; then
+
+  checkMackup
+  setComputerSettings
+ 	setSystemPreferences
+ 	setSafariPreferences
+ 	setMailPreferences
+ 	setTerminalPreferences
+ 	setPhotoPreferences
+ 	setOtherPreferences
+
+  echo "${GREEN}Done setting preferences."
+  echo "Note that some of these changes require a logout/restart to take effect."
+
+  installHomebrew
+  installJSEnvironment
+  installPythonEnvironment
+  installRubyEnvironment
+  installiOSEnvironment
+  installJavaEnvironment
+  installAndroidEnvironment
+  installDatabases
+  installCommandLineTools
+  installCask
+  installOptionalApplications
+  installMacAppStoreApps
+  installApplications
+  restoreMackupBackup
+  installFonts
+  installBashrc
+  installBashProfile
+  installVimConfiguration
+  codesignXcode
+  installXcodePlugins
 
   echo "Cleaning Up Cask Files"
   brew cask cleanup
-
   clear
-
   echo "${GREEN}Done${NC}"
 
   exit 0
