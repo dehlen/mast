@@ -191,7 +191,9 @@ mast is a installation script which contains several installation instructions t
 - Installing saved backup from mackup
 
 ## Mackup
-mast makes use of my own fork of [mackup](https://github.com/lra/mackup). The fork contains several merged Pull Requests for applications I am installing with this script. Mackup syncs various application preferences by copying the respective files to a chosen engine and symlinks them on the host computer. This way the preferences will always stay in sync. This repository contains a sample mackup.cfg which I used to backup application preferences. The backuped files may also include licenses so you won't have to reinstall them. For further information on mackup have a look at the linked repository. Please note that restoring application preferences with mackup is an optional process and can be omitted.
+mast makes use of my own fork of [mackup](https://github.com/lra/mackup). The fork contains several merged pull requests for applications I am installing with this script. Mackup syncs various application preferences by copying the respective files to a chosen engine like iCloud or Dropbox and symlinks them on the host computer. This way the preferences will always stay in sync. This repository contains a sample mackup.cfg which I used to backup application preferences. The backuped files may also include licenses so you won't have to reinstall them. For further information on mackup have a look at the linked repository.
+
+Please note that restoring application preferences with mackup is an optional process and can be omitted. The script will look for a valid .mackup.cfg file in the $HOME folder and asks to restore application preferences based on that information. You don't need to have mackup installed on the new machine since the script will checkout my fork of mackup.
 
 ## Further Steps
 - Setup Developer Account in Xcode
