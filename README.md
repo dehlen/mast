@@ -133,7 +133,15 @@ mast is a installation script which contains several installation instructions t
     - varela
 - Installing dotfiles
     - bashrc
+    	- setting sublime as EDITOR variable
+    	- configuring z shell script to change directories more easily
+    	- alias for listing all files in a directory, including hidden files
+    	- alias for sublime
+    	- alias for searching through history
+    	- alias for finding files and folders recursively
+    	- function to show a notification if a terminal command exits while the terminal window is in background
     - bash_profile
+    	- configure colors and prefix in terminal window
     - vim configuration
 - Xcode
     - Creating self signed certficate
