@@ -660,7 +660,6 @@ function restoreMackupBackup {
 function installFonts {
 	echo "Installing Fonts"
   fonts=(
-    font-anonymous-pro
     font-hack
     font-inconsolata
     font-droid-sans-mono
@@ -804,6 +803,7 @@ function codesignXcode {
     rm "${cert}.pem"
     rm "${cert}.cfg"
   fi
+}
   echo "Signing Xcode with the created certificate"
   xcodePath="$(xcode-select -p)"
   xcodePath="${xcodePath%%/Contents*}"
@@ -816,7 +816,6 @@ function installXcodePlugins {
   make -C "$HOME/.xcode_plugins"
   echo "${RED}Plugin successfully installed. Launch Xcode and select \"Load Bundle\".${NC}"
   echo "${RED}If you clicked \"Don't Load Bundle\" by mistake execute the following from Terminal and launch Xcode again: defaults delete com.apple.dt.Xcode DVTPlugInManagerNonApplePlugIns-Xcode-X.X # (X.X is your Xcode version)${NC}"
-}
 
 # Keep Sudo Until Script is finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
@@ -855,8 +854,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   installBashrc
   installBashProfile
   installVimConfiguration
-  codesignXcode
-  installXcodePlugins
+  codesignXcodeAndInstallPlugins
 
   echo "Cleaning Up Cask Files"
   brew cask cleanup
