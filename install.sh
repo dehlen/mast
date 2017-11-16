@@ -623,7 +623,7 @@ function installMacAppStoreApps {
 
 function installApplications {
 	echo "Installing Apps"
-  echo -e "Installing\n[+]Google Chrome\n[+]Postman\n[+]Reggy\n[+]AppCleaner\n[+]Wireshark\n[+]VNC-Viewer\n[+]Sublime Text\n[+]Dropbox\n[+]RescueTime\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash 3\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 2\n[+]1Password\n[+]Visual Studio Code"
+  echo -e "Installing\n[+]Google Chrome\n[+]Postman\n[+]Reggy\n[+]AppCleaner\n[+]Wireshark\n[+]VNC-Viewer\n[+]Sublime Text\n[+]Dropbox\n[+]RescueTime\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash 3\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 3\n[+]1Password\n[+]Visual Studio Code\n[+]Fantastical 2"
 
   brew cask install \
   google-chrome \
@@ -639,11 +639,12 @@ function installApplications {
   dash3 \
   hopper-disassembler \
   hopper-debugger-server \
-  alfred2 \
+  alfred \
   1password \
   spectacle \
   visual-studio-code \
-  sublime-text
+  sublime-text \
+  fantastical
 }
 
 function restoreMackupBackup {

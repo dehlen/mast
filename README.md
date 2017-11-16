@@ -96,11 +96,12 @@ mast is a installation script which contains several installation instructions t
     - charles
     - dash 3
     - hopper disassembler & debugger server
-    - alfred 2
+    - alfred 3
     - 1password
     - spectacle
     - visual studio code
     - sublime text
+    - fantastical
 - Installing fonts
     - anonymous-pro
     - hack
