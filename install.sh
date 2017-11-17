@@ -414,9 +414,14 @@ function installiOSEnvironment {
   echo    # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]
     then
-    echo -e "Installing\n[+]cocoapods\n[+]carthage\n[+]fastlane\n[+]opensim"
+    echo -e "Installing\n[+]cocoapods\n[+]carthage\n[+]fastlane\n[+]opensim\n[+]marathon\n[+]testdrive"
     sudo gem install cocoapods
-    brew install carthage
+    
+    brew install \
+    carthage \
+    marathon-swift
+
+    marathon install johnsundell/testdrive
 
     brew cask install \
     fastlane \
@@ -490,7 +495,8 @@ function installCommandLineTools {
   vim \
   tldr \
   z \
-  ack
+  ack \
+  marathon-swift
 }
 
 function tapCask {

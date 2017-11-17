@@ -168,6 +168,8 @@ mast is a installation script which contains several installation instructions t
 - Installing tools for iOS Development
     - cocoapods
     - carthage
+    - marathon
+    - testdrive
     - fastlane
     - opensim
 - Installing tools Java Development
