@@ -85,7 +85,7 @@ mast is a installation script which contains several installation instructions t
     - ack
 - Installing applications
     - google chrome
-    - postman
+    - paw
     - reggy
     - appcleaner
     - wireshark
