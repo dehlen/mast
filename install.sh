@@ -630,17 +630,14 @@ function installMacAppStoreApps {
 
 function installApplications {
 	echo "Installing Apps"
-  echo -e "Installing\n[+]Google Chrome\n[+]Reggy\n[+]AppCleaner\n[+]Wireshark\n[+]VNC-Viewer\n[+]Sublime Text\n[+]Dropbox\n[+]RescueTime\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 3\n[+]1Password\n[+]Visual Studio Code\n[+]Fantastical 2"
+  echo -e "Installing\n[+]Google Chrome\n[+]Reggy\n[+]AppCleaner\n[+]Sublime Text\n[+]Dropbox\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 3\n[+]1Password\n[+]Visual Studio Code\n[+]Fantastical 2\n[+]Evernote\n[+]AppCode\n[+]Spotify\n[+]TeaCode"
 
   brew cask install \
   google-chrome \
   paw \
   reggy \
   appcleaner \
-  wireshark \
-  vnc-viewer \
   dropbox \
-  rescuetime \
   tower \
   charles \
   dash \
@@ -648,10 +645,18 @@ function installApplications {
   hopper-debugger-server \
   alfred \
   1password \
-  spectacle \
   visual-studio-code \
   sublime-text \
-  fantastical
+  fantastical \
+  evernote \
+  appcode \
+  spotify \
+  bettertouchtool
+
+  curl -o "$HOME/TeaCode.zip" "https://www.apptorium.com/teacode/trial"
+  unzip "$HOME/TeaCode.zip"
+  mv "$HOME/TeaCode.app" "/Application/"
+  rm "$HOME/TeaCode.zip"
 }
 
 function restoreMackupBackup {

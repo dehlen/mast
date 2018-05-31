@@ -89,20 +89,21 @@ mast is a installation script which contains several installation instructions t
     - paw
     - reggy
     - appcleaner
-    - wireshark
-    - vnc-viewer
     - dropbox
-    - rescuetime
     - tower
     - charles
     - dash
     - hopper disassembler & debugger server
     - alfred 3
     - 1password
-    - spectacle
     - visual studio code
     - sublime text
     - fantastical
+    - evernote
+    - appcode
+    - spotify
+    - teacode
+    - bettertouchtool
 - Installing fonts
     - anonymous-pro
     - hack
