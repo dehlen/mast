@@ -199,6 +199,7 @@ mast is a installation script which contains several installation instructions t
 - Installing mactex & texmaker
 - Installing some of your Mac App Store Apps
     - Sign in and choose which ones you'd like to install
+    - (Reeder, Tweetbot, Pixelmator)
 - Installing saved backup from mackup
 
 ## Mackup
@@ -210,6 +211,7 @@ Please note that restoring application preferences with mackup is an optional pr
 - Setup Developer Account in Xcode
 - Copy folders/files from the HOME directory of your old computer if needed
 - Open apps like dropbox to login or to add license files which were not synched via mackup
+- Setup ssh keys for github etc.
 
 ## Naming
 If you wondered mast stands for **ma**c **s**etup **t**ool.
