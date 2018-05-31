@@ -500,9 +500,10 @@ function installCommandLineTools {
   sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 }
 
-function tapCask {
+function installCask {
   brew tap caskroom/cask
   brew tap caskroom/versions
+  brew tap homebrew/cask-fonts
 }
 
 function installOptionalApplications {
