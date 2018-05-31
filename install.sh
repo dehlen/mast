@@ -766,6 +766,57 @@ function installVimConfiguration {
   " >> "$HOME/.vim_runtime/my_configs.vim"
 }
 
+function installZshConfiguration {
+	echo "Installing .zshrc"
+  echo "
+  export ZSH=/Users/dehlen/.oh-my-zsh
+  ZSH_THEME=\"dehlen\"
+  plugins=(
+  	git
+	)
+
+	source \$ZSH/oh-my-zsh.sh
+
+  . /usr/local/etc/profile.d/z.sh
+
+  export EDITOR='sublime'
+
+  alias subl='open -a /Applications/Sublime\ Text.app'
+  function h() {
+    if [ -z \"\$1\" ]
+      then
+      history
+    else
+      history | grep \"\$@\"
+    fi
+  }
+
+  alias ll='ls -la'
+
+  function find_dir {
+		find \"\$PWD\" -type d -name \"\$1\"
+	}
+
+	function find_file {
+		find \"\$PWD\" -type f -name \"\$1\"
+	}
+
+	function sublf() {
+  	for i in \$(ag -l --hidden \"\$1\"); do subl \"\$i\"; done
+	}
+	" >> "$HOME/.zshrc"
+
+	echo "Installing custom zsh theme"
+	echo " 
+		PROMPT='%(?,%{\$fg[green]%},%{\$fg[green]%}) $ %{\$fg[blue]%}%~%{\$reset_color%} '
+		# RPS1='%{\$fg[blue]%}%~%{\$reset_color%} '
+		RPS1='%{\$fg[white]%}\$(git_prompt_info)%{\$reset_color%}'
+
+		ZSH_THEME_GIT_PROMPT_PREFIX=\" %{\$fg[yellow]%}(\"
+		ZSH_THEME_GIT_PROMPT_SUFFIX=\")%{\$reset_color%}\"
+		ZSH_THEME_GIT_PROMPT_CLEAN=\"\"
+		ZSH_THEME_GIT_PROMPT_DIRTY=\"%{\$fg[red]%} %{\$fg[yellow]%}*\"
+	" >> "$HOME/.oh-my-zsh/themes/dehlen.zsh-theme"
 }
 
 # Keep Sudo Until Script is finished
@@ -805,6 +856,7 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   installBashrc
   installBashProfile
   installVimConfiguration
+  installZshConfiguration
 
   echo "Cleaning Up Cask Files"
   brew cask cleanup

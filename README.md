@@ -147,6 +147,8 @@ mast is a installation script which contains several installation instructions t
     - bash_profile
     	- configure colors and prefix in terminal window
     - vim configuration
+    - zshrc
+    - oh-my-zsh theme
 
 **Other applications, dotfiles and preferences are optional and the user is asked on every step to continue installation or not.**
 
