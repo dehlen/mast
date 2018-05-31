@@ -170,6 +170,7 @@ mast is a installation script which contains several installation instructions t
     - testdrive
     - fastlane
     - opensim
+    - swiftlint
 - Installing tools Java Development
     - jdk
     - eclipse
