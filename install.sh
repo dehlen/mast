@@ -487,7 +487,7 @@ function installCommandLineTools {
 	clear
   # Install Homebrew Apps
   echo "Installing Homebrew Command Line Tools"
-  echo -e "Installing\n[+]wget\n[+]micro\n[+]jid\n[+]vim\n[+]tldr\n[+]z\n[+]ack"
+  echo -e "Installing\n[+]wget\n[+]micro\n[+]jid\n[+]vim\n[+]tldr\n[+]z\n[+]ag\n[+]oh-my-zsh"
   brew install \
   wget \
   micro \
@@ -495,8 +495,9 @@ function installCommandLineTools {
   vim \
   tldr \
   z \
-  ack \
-  marathon-swift
+  the_silver_searcher
+
+  sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 }
 
 function tapCask {

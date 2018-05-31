@@ -82,7 +82,8 @@ mast is a installation script which contains several installation instructions t
     - vim
     - tldr
     - z
-    - ack
+    - ag
+    - oh-my-zsh
 - Installing applications
     - google chrome
     - paw
