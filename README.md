@@ -143,6 +143,7 @@ mast is a installation script which contains several installation instructions t
     	- alias for searching through history
     	- alias for finding files and folders recursively
     	- function to show a notification if a terminal command exits while the terminal window is in background
+        - function to search for a specific text and open all files containing that text in sublime
     - bash_profile
     	- configure colors and prefix in terminal window
     - vim configuration

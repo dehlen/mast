@@ -732,32 +732,10 @@ function installBashrc {
 		find \"\$PWD\" -type f -name \"\$1\"
 	}
 
-	function f_notifyme {
-  	LAST_EXIT_CODE=\$?
-  	CMD=\$(fc -ln -1)
-	  notifyme \"\$CMD\" \"\$LAST_EXIT_CODE\" &
+	function sublf() {
+  	for i in \$(ag -l --hidden \"\$1\"); do subl \"\$i\"; done
 	}
-
-	export PS1='\$(f_notifyme)'\$PS1" >> "$HOME/.bashrc"
-
-	echo "Installing additional scripts needed for .bashrc"
-	echo "#!/usr/bin/env osascript
-
-	on run argv
-	  tell application \"System Events\"
-	    set frontApp to name of first application process whose frontmost is true
-	    if frontApp is not \"Terminal\" then
-	      set notifTitle to item 1 of argv
-	      set notifBody to \"succeded\"
-	      set errorCode to item 2 of argv
-	      if errorCode is not \"0\"
-	        set notifBody to \"failed with error code \" & errorCode
-	      end if
-	      display notification notifBody with title notifTitle
-	    end if
-	  end tell
-	end run" >> "/usr/local/bin/notifyme"
-	chmod u+x /usr/local/bin/notifyme
+	" >> "$HOME/.bashrc"
 }
 
 function installBashProfile {
