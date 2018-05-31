@@ -764,58 +764,6 @@ function installVimConfiguration {
   " >> "$HOME/.vim_runtime/my_configs.vim"
 }
 
-function codesignXcodeAndInstallPlugins {
-	echo -e "${RED}CodeSign Xcode to Install Plugins? ${NC}[y/N]"
-  read -n 1 -r
-  echo    # (optional) move to a new line
-  if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-	  echo "Generating Certificate to codesign Xcode"
-	  cert="XcodeSigner"
-	  echo "
-	  [ req ]
-	  default_bits       = 2048        # RSA key size
-	  encrypt_key        = no          # Protect private key
-	  default_md         = sha512      # MD to use
-	  prompt             = no          # Prompt for DN
-	  distinguished_name = codesign_dn # DN template
-	  [ codesign_dn ]
-	  commonName         = "XcodeSigner"
-	  [ codesign_reqext ]
-	  keyUsage           = critical,digitalSignature
-	  extendedKeyUsage   = critical,codeSigning
-	  " > "${cert}.cfg"
-	  if $(security find-certificate -Z -p -c "$cert" /Library/Keychains/System.keychain 2>&1 | egrep -o '^SHA-1' >/dev/null); then
-	    echo "$cert is already installed, no need to create it"
-	  else
-	    echo "Generating $cert"
-	    openssl req -new -newkey rsa:2048 -x509 -days 3650 -nodes -config "${cert}.cfg" -extensions codesign_reqext -batch -out "${cert}.pem" -keyout "${cert}.key"
-	    echo "[SUDO] Installing ${cert} as root"
-	    sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain "${cert}.pem"
-	    sudo security import "${cert}.key" -A -k /Library/Keychains/System.keychain
-	    echo "[SUDO] Killing taskgated"
-	    sudo pkill -f /usr/libexec/taskgated
-	    rm "${cert}.key"
-	    rm "${cert}.pem"
-	    rm "${cert}.cfg"
-	  fi
-	  echo "Signing Xcode with the created certificate"
-	  xcodePath="$(xcode-select -p)"
-	  xcodePath="${xcodePath%%/Contents*}"
-	  sudo codesign -f -s "$cert" "$xcodePath"
-  	
-  	echo -e "${RED}Install XVim2 Plugin? ${NC}[y/N]"
-  	read -n 1 -r
-  	echo    # (optional) move to a new line
-  	if [[ $REPLY =~ ^[Yy]$ ]]
-    	then
-	  	echo "Loading XVim Plugin for Xcode"
-    	git clone https://github.com/XVimProject/XVim2.git "$HOME/.xcode_plugins"
-    	make -C "$HOME/.xcode_plugins"
-    	echo "${RED}Plugin successfully installed. Launch Xcode and select \"Load Bundle\".${NC}"
-    	echo "${RED}If you clicked \"Don't Load Bundle\" by mistake execute the following from Terminal and launch Xcode again: defaults delete com.apple.dt.Xcode DVTPlugInManagerNonApplePlugIns-Xcode-X.X # (X.X is your Xcode version)${NC}"
-  	fi
-  fi
 }
 
 # Keep Sudo Until Script is finished
@@ -855,7 +803,6 @@ if type xcode-select >&- && xpath=$( xcode-select --print-path ) &&
   installBashrc
   installBashProfile
   installVimConfiguration
-  codesignXcodeAndInstallPlugins
 
   echo "Cleaning Up Cask Files"
   brew cask cleanup
