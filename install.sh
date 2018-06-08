@@ -632,7 +632,7 @@ function installMacAppStoreApps {
 
 function installApplications {
 	echo "Installing Apps"
-  echo -e "Installing\n[+]Google Chrome\n[+]Reggy\n[+]AppCleaner\n[+]Sublime Text\n[+]Dropbox\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 3\n[+]1Password\n[+]Visual Studio Code\n[+]Fantastical 2\n[+]Evernote\n[+]AppCode\n[+]Spotify\n[+]TeaCode"
+  echo -e "Installing\n[+]Google Chrome\n[+]Reggy\n[+]AppCleaner\n[+]Sublime Text\n[+]Dropbox\n[+]Tower Git\n[+]Charles Web Proxy\n[+]Dash\n[+]Hopper Disassembler & Debugger Server\n[+]Alfred 3\n[+]1Password\n[+]Visual Studio Code\n[+]Fantastical 2\n[+]Evernote\n[+]AppCode\n[+]Spotify\n[+]TeaCode\n[+]DevonThink Pro Office\n[+]WWDC"
 
   brew cask install \
   google-chrome \
@@ -653,12 +653,18 @@ function installApplications {
   evernote \
   appcode \
   spotify \
-  bettertouchtool
+  bettertouchtool \
+  devonthink-pro-office
 
   curl -o "$HOME/TeaCode.zip" "https://www.apptorium.com/teacode/trial"
   unzip "$HOME/TeaCode.zip"
   mv "$HOME/TeaCode.app" "/Application/"
   rm "$HOME/TeaCode.zip"
+
+  curl -o "$HOME/WWDC.zip" "https://github.com/insidegui/WWDC/releases/download/6.0.3/WWDC_v6.0.3.zip"
+  unzip "$HOME/WWDC.zip"
+  mv "$HOME/WWDC.app" "/Application/"
+  rm "$HOME/WWDC.zip"
 }
 
 function restoreMackupBackup {

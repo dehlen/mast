@@ -104,6 +104,8 @@ mast is a installation script which contains several installation instructions t
     - spotify
     - teacode
     - bettertouchtool
+    - devon think pro office
+    - wwdc (unofficial app)
 - Installing fonts
     - anonymous-pro
     - hack
